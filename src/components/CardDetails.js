@@ -1,10 +1,44 @@
 import React, {useState} from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableWithoutFeedback, Animated, Easing } from "react-native";
+import { withNavigation } from "react-navigation";
 
-const CardDetails = ({title, img, price})=>{
+const CardDetails = ({title, img, price, borderColor, navigation})=>{
 
-    //console.log(img);
-    return <View style={{ height: 150, width:325, marginVertical: 13 }}>
+    let scaleValue = useState(new Animated.Value(0))[0];
+
+    const imageScale = scaleValue.interpolate({
+        inputRange:[0, 0.5, 1 ],
+        outputRange:[1, 1.1, 1.2]
+    })
+
+    let transformStyle = {...styles.imageStyle, transform: [{scale: imageScale}]}
+
+    
+    return <TouchableWithoutFeedback onPressIn= {()=>{
+        scaleValue.setValue(0);
+
+        Animated.timing(scaleValue, {
+            toValue: 1,
+            duration: 250,
+            easing: Easing.linear,
+            useNativeDriver: true
+        }).start();
+
+        
+    }} onPressOut={()=>{
+
+        Animated.timing(scaleValue, {
+            toValue: 0,
+            duration: 100,
+            easing: Easing.linear,
+            useNativeDriver: true
+        }).start();
+
+        navigation.navigate('Product', {title, img, price});
+        
+    }}>
+    
+    <View style={{ height: 150, width:325, marginVertical: 13 }}>
 
         
         <View style={styles.card}>
@@ -17,16 +51,18 @@ const CardDetails = ({title, img, price})=>{
                 </View>
             </View>
 
-            <Image source={img} style={styles.imageStyle} />
+            <Animated.Image source={img} style={transformStyle} />
 
             
         </View>
 
-        <View style={styles.extendedBorder}>
+        <View style={[{backgroundColor: borderColor},styles.extendedBorder]}>
 
         </View>
 
     </View>
+
+    </TouchableWithoutFeedback>
 }
 
 const styles = StyleSheet.create({
@@ -65,9 +101,8 @@ const styles = StyleSheet.create({
         zIndex: 1,
         height: 130,
         width: 325,
-        backgroundColor: '#03cefc',
         borderRadius: 25
     }
 });
 
-export default CardDetails;
+export default withNavigation(CardDetails);

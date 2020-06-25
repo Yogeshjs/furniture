@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet, FlatList, Dimensions, TouchableOpacity } from "react-native";
+import React, {useState} from "react";
+import { View, Text, TextInput, StyleSheet, FlatList, Dimensions, TouchableOpacity, ScrollView, Animated } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import {Feather} from "react-native-vector-icons";
 import CardDetails from "../components/CardDetails";
@@ -46,6 +46,8 @@ const HomeScreen = ()=>{
       }
     ]
 
+    const scrollY = useState(new Animated.Value(0))[0];
+
 
 
     return <View style={{flex:1}}>
@@ -90,13 +92,26 @@ const HomeScreen = ()=>{
 
     </View>
 
-    <View style={styles.productStyles}>
+    <Animated.ScrollView style={styles.productStyles} 
+    showsVerticalScrollIndicator = {false}
+    contentContainerStyle={{
+      paddingTop: 20,
+      paddingBottom: 100
+    }} 
+    onScroll={Animated.event(
+      [{nativeEvent: {contentOffset: {y: scrollY}}}],
+      {useNativeDriver: true}
+    )} >
 
-    <CardDetails title='Classic Leather Arm Chair' img={require('../../assets/Item_1.png')} price='56'/>
-    <CardDetails title='Poppy Plastic Tube Chair' img={require('../../assets/Item_2.png')} price='56'/>
-    <CardDetails title='Bar Stool Chair' img={require('../../assets/Item_3.png')} price='56'/>
+    
 
-    </View>
+    <CardDetails title='Classic Leather Arm Chair' img={require('../../assets/Item_1.png')} price='56' borderColor="#03cefc" />
+    <CardDetails title='Poppy Plastic Tube Chair' img={require('../../assets/Item_2.png')} price='56' borderColor="#edc811" />
+    <CardDetails title='Bar Stool Chair' img={require('../../assets/Item_3.png')} price='56' borderColor="#03cefc" />
+
+    
+
+    </Animated.ScrollView>
 
    
 
@@ -150,10 +165,10 @@ const styles = StyleSheet.create({
     },
     productStyles:{
       position:'absolute', 
-      bottom: 30,
+      bottom: -25,
       left: 12,
       width: Math.round(Dimensions.get('window').width),
-      height: 475
+      height: 550
     }
   });
 
